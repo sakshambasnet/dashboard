@@ -1,9 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Nav } from "./ui/nav";
-
-type Props = {};
-
+import { useWindowWidth } from "@react-hook/window-size";
 import {
   ChevronRight,
   LayoutDashboard,
@@ -13,25 +11,37 @@ import {
 } from "lucide-react";
 import { Button } from "./ui/button";
 
+type Props = {};
+
 export default function SideNavbar({}: Props) {
   const [isCollapsed, setisCollapsed] = useState(false);
+  const [mobileWidth, setMobileWidth] = useState(false);
+  const onlyWidth = useWindowWidth();
+
+  useEffect(() => {
+    // This runs only on the client after the component mounts
+    setMobileWidth(onlyWidth < 760);
+  }, [onlyWidth]);
+
   function toggleSidebar() {
     setisCollapsed(!isCollapsed);
   }
 
   return (
-    <div className=" relative min-w-[80px] border-r px-3 pb-10 pt-24">
-      <div className=" absolute right-[-20px] top-7">
-        <Button 
-          variant="secondary"
-          className=" rounded-full p-2"
-          onClick={toggleSidebar}
-        >
-          <ChevronRight />
-        </Button>
-      </div>
+    <div className="relative min-w-[80px] border-r px-3 pb-10 pt-24">
+      {!mobileWidth && (
+        <div className="absolute right-[-20px] top-7">
+          <Button
+            variant="secondary"
+            className="rounded-full p-2"
+            onClick={toggleSidebar}
+          >
+            <ChevronRight />
+          </Button>
+        </div>
+      )}
       <Nav
-        isCollapsed={isCollapsed}
+        isCollapsed={mobileWidth ? true : isCollapsed}
         links={[
           {
             title: "Dashboard",
